@@ -8,8 +8,11 @@ import sqlite3
 import mmap
 import os
 import time
+import interceptor
+
 
 app = Flask(__name__)
+app.wsgi_app = interceptor.Interceptor(app.wsgi_app)
 app.config.from_object(__name__)
 app.secret_key= '42'
 
@@ -59,7 +62,13 @@ def getlogtail():
                            message = "Activity log file is empty")
             
 
-
+# Authentication Control
+@app.route('/mobile', methods = ['POST'])
+def get_otp():
+    if request.method == 'POST':
+        if 'application/json' in request.mimetype:
+            mobile_number = request.json.get('mobile')
+            otp = '1234'
 
 # Username and password control
 @app.route('/login/control', methods = ['GET', 'POST'])
