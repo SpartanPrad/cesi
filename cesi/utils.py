@@ -1,6 +1,9 @@
 from cesi import Config, Node, CONFIG_FILE
 from flask import session
 
+import requests
+import urllib
+
 
 def dashboard_info():
     all_process_count = 0
@@ -100,3 +103,12 @@ def dashboard_info():
     output['usertype'] = usertype
     output['usertypecode'] = session['usertype']
     return output
+
+
+def otp_send(mobile_number,otp):
+    message = "Use otp as {otp} for accessing portal".format(otp=otp)
+    message = urllib.quote(message)
+    requestUrl = "http://api-alerts.solutionsinfini.com/v3/?method=sms&api_key=A8aedaeb78654abbd47e299c40a51e014&to=" + mobile_number + "&sender=UNIPAY&message=" + message + "&format=json&custom=1,2&flash=0"
+    res = requests.get(requestUrl)
+    data = res.json()
+    print data

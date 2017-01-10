@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 from flask import jsonify
 import os
 
-#CONFIG_FILE = "/etc/cesi.conf"
-path=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CONFIG_FILE = path+"/cesi.conf"
+CONFIG_FILE = "/etc/cesi.conf"
+#path=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#CONFIG_FILE = path+"/cesi.conf"
 class Config:
     
     def __init__(self, CFILE):
