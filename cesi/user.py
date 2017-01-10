@@ -227,5 +227,9 @@ def add_user():
             datetime.now().ctime()))
             return jsonify(status='error')
 
-
-
+@user_blueprint.route('/mobile', methods = ['POST'])
+def get_otp():
+    if request.method == 'POST':
+        if 'application/json' in request.mimetype:
+            mobile_number = request.json.get('mobile')
+            otp = '1234'
