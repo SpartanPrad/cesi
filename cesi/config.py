@@ -1,6 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, jsonify, request, g, session, flash
 from cesi import Config, Connection, Node, CONFIG_FILE, ProcessInfo, JsonValue
-
 import sqlite3
 import interceptor
 
@@ -34,3 +33,19 @@ def close_connection(exception):
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
+
+
+@app.route("/denial")
+def denial():
+    res=jsonify(error_message="token_invalid")
+    res._status='403'
+    res._status_code = 403
+    return res
+
+@app.route("/token_expire")
+def token_expire():
+    res=jsonify(error_message="token_expire")
+    res._status='401'
+    res._status_code = 401
+    return res
+
