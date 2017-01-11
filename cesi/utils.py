@@ -112,3 +112,8 @@ def otp_send(mobile_number,otp):
     res = requests.get(requestUrl)
     data = res.json()
     print data
+
+
+def generate_otp():
+    import random
+    return ''.join(str(random.randrange(10)) for i in range(0,4))
