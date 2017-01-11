@@ -2,6 +2,8 @@ from flask import Flask, render_template, url_for, redirect, jsonify, request, g
 from datetime import datetime
 
 from config import app,DATABASE,ACTIVITY_LOG,HOST,get_db
+from utils import generate_otp, otp_send
+import time
 
 
 user_blueprint = Blueprint('user', __name__,)
@@ -232,4 +234,28 @@ def get_otp():
     if request.method == 'POST':
         if 'application/json' in request.mimetype:
             mobile_number = request.json.get('mobile')
-            otp = '1234'
+            cur = get_db().cursor()
+            result_list=list()
+            try:
+                cur.execute("select * from otp where MOBILE=?", (int(mobile_number),))
+                result_list = cur.fetchall()
+                if len(result_list) > 1:
+                    raise Exception("Multiple entries in otp table")
+
+                otp = generate_otp()
+                enc_otp = (str(mobile_number) + ':' + str(otp)).encode('base64').strip('\n')
+                created_on = int(round(time.time() * 1000))
+                if len(result_list) == 0:
+                    cur.execute("insert into otp values(?,?,?)", (int(mobile_number),str(enc_otp), int(created_on), ))
+                    get_db().commit()
+                    otp_send(mobile_number=str(mobile_number), otp=str(otp))
+                    return jsonify(status='success', message='OTP sent successfully')
+                else:
+                    cur.execute("update otp set OTP=?, CREATED_ON=? where MOBILE=?", (str(enc_otp),int(created_on),
+                                                                                      int(mobile_number),))
+                    get_db().commit()
+                    otp_send(mobile_number=str(mobile_number), otp=str(otp))
+                    return jsonify(status='success', message='OTP updated successfully')
+            except Exception as ex:
+                print ex
+                return jsonify(status='error', message=str(ex))
