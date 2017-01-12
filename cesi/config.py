@@ -44,7 +44,7 @@ def denial():
 
 @app.route("/token_expire")
 def token_expire():
-    res=jsonify(error_message="token_expire")
+    res=jsonify(error_message="token_expired")
     res._status='401'
     res._status_code = 401
     return res
